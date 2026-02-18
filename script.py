@@ -32,7 +32,6 @@ try:
         print(f"{enseigne}: Work in Progress")
         page = 0
         enseigne_rows = []
-        date_scraped = date.today().isoformat()
 
         while True:
             
