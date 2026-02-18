@@ -1,5 +1,5 @@
 #import pandas as pd
-from datetime import date
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 import os
@@ -29,6 +29,7 @@ trustpilot = ["darty.com",
 all_data_for_supabase = []
 try:
     for enseigne, url in zip(enseignes, trustpilot):
+        print(f"{enseigne}: Work in Progress")
         page = 0
         enseigne_rows = []
         date_scraped = date.today().isoformat()
@@ -42,6 +43,7 @@ try:
             reviews_container = soup.find('div', attrs={'data-reviews-list-start': 'true'})
             if not reviews_container:
                 break
+            else:
                 reviews = reviews_container.find_all('article', attrs={'data-service-review-card-paper': 'true'})
 
                 for review in reviews:
@@ -77,6 +79,7 @@ try:
                         "company": enseigne
                         }
                         enseigne_rows.append(new_review)
+                        print(f"{enseigne}: {enseigne_rows}")
                         all_data_for_supabase.append(new_review)
 except Exception as e:
    print(f"Erreur lors du scraping: {e}")
@@ -85,6 +88,7 @@ api_url = os.environ.get("SUPABASE_URL")
 secret_key = os.environ.get("SUPABASE_KEY")
 
 try:
+    print("Supabase connection in progress")
     supabase_client: Client = create_client(api_url, secret_key)
     if all_data_for_supabase:
         response = (
