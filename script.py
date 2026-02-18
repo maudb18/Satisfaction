@@ -29,13 +29,13 @@ trustpilot = ["darty.com",
 all_data_for_supabase = []
 try:
     for enseigne, url in zip(enseignes, trustpilot):
-        print(f"{enseigne}: Work in Progress")
         page = 0
         enseigne_rows = []
 
         while True:
             
             page += 1
+            print(f"{enseigne}: Page {page}")
             res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
             soup = bs(res.content, "lxml")
 
@@ -78,8 +78,10 @@ try:
                     "company": enseigne
                     }
                     enseigne_rows.append(new_review)
-                    print(f"{enseigne}: len({enseigne_rows})")
+                    print(f"{enseigne}: {len(enseigne_rows)}")
                     all_data_for_supabase.append(new_review)
+        print(f"{enseigne}: {len(enseigne_rows)}")
+
 except Exception as e:
    print(f"Erreur lors du scraping: {e}")
 
@@ -92,7 +94,7 @@ try:
     if all_data_for_supabase:
         response = (
             supabase_client.from_("Trustpilot_scraping")
-            .insert(all_data_for_supabase)
+            .upsert(all_data_for_supabase)
             .execute()
         )
 except Exception as e:
