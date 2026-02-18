@@ -42,44 +42,44 @@ try:
             reviews_container = soup.find('div', attrs={'data-reviews-list-start': 'true'})
             if not reviews_container:
                 break
-            else:
-                reviews = reviews_container.find_all('article', attrs={'data-service-review-card-paper': 'true'})
 
-                for review in reviews:
-                    author = review.find('span', attrs={'data-consumer-name-typography': 'true'}).text.strip()
+            reviews = reviews_container.find_all('article', attrs={'data-service-review-card-paper': 'true'})
 
-                    rating_tag = review.select_one('img[alt^="Noté"]')
-                    rating = rating_tag['alt'].split(' ')[1] if rating_tag else None
-                    if rating is not None:
-                        rating = int(rating)
+            for review in reviews:
+                author = review.find('span', attrs={'data-consumer-name-typography': 'true'}).text.strip()
 
-                        title_tag = review.find('h2', attrs={'data-service-review-title-typography': 'true'})
-                        title = title_tag.text.strip() if title_tag else None
+                rating_tag = review.select_one('img[alt^="Noté"]')
+                rating = rating_tag['alt'].split(' ')[1] if rating_tag else None
+                if rating is not None:
+                    rating = int(rating)
 
-                        content_tag = review.find('p', attrs={'data-service-review-text-typography': 'true'})
-                        content = content_tag.text.strip() if content_tag else None
+                    title_tag = review.find('h2', attrs={'data-service-review-title-typography': 'true'})
+                    title = title_tag.text.strip() if title_tag else None
 
-                        time_tag = review.find('time')
-                        date_pub = time_tag['datetime'] if time_tag else None
+                    content_tag = review.find('p', attrs={'data-service-review-text-typography': 'true'})
+                    content = content_tag.text.strip() if content_tag else None
 
-                        exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
-                        date_exp = exp_tag.text.strip() if exp_tag else None
+                    time_tag = review.find('time')
+                    date_pub = time_tag['datetime'] if time_tag else None
 
-                        date_scraped = datetime.today().strftime('%Y-%m-%d') 
+                    exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
+                    date_exp = exp_tag.text.strip() if exp_tag else None
 
-                        new_review = {
-                        "author": author,
-                        "rating": rating,
-                        "title": title,
-                        "date_pub": date_pub,
-                        "date_exp": date_exp,
-                        "content": content,
-                        "date_scraped": date_scraped,
-                        "company": enseigne
-                        }
-                        enseigne_rows.append(new_review)
-                        print(f"{enseigne}: {enseigne_rows}")
-                        all_data_for_supabase.append(new_review)
+                    date_scraped = datetime.today().strftime('%Y-%m-%d') 
+
+                    new_review = {
+                    "author": author,
+                    "rating": rating,
+                    "title": title,
+                    "date_pub": date_pub,
+                    "date_exp": date_exp,
+                    "content": content,
+                    "date_scraped": date_scraped,
+                    "company": enseigne
+                    }
+                    enseigne_rows.append(new_review)
+                    print(f"{enseigne}: len({enseigne_rows})")
+                    all_data_for_supabase.append(new_review)
 except Exception as e:
    print(f"Erreur lors du scraping: {e}")
 
