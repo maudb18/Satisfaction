@@ -95,7 +95,7 @@ try:
     if all_data_for_supabase:
         response = (
             supabase_client.from_("Trustpilot_scraping")
-            .upsert(all_data_for_supabase)
+            .upsert(all_data_for_supabase, on_conflict="author, rating, title, date_pub, company")
             .execute()
         )
 except Exception as e:
