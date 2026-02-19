@@ -37,7 +37,7 @@ try:
             
             page += 1
             print(f"{enseigne}: Page {page}")
-            #res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
+            res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
             soup = bs(res.content, "lxml")
 
             reviews_container = soup.find('div', attrs={'data-reviews-list-start': 'true'})
