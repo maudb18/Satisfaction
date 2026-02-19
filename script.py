@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 import os
+import sys
 from supabase import Client, create_client
 
 
@@ -36,7 +37,7 @@ try:
             
             page += 1
             print(f"{enseigne}: Page {page}")
-            res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
+            #res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
             soup = bs(res.content, "lxml")
 
             reviews_container = soup.find('div', attrs={'data-reviews-list-start': 'true'})
@@ -80,10 +81,10 @@ try:
                     enseigne_rows.append(new_review)
                     print(f"{enseigne}: {len(enseigne_rows)}")
                     all_data_for_supabase.append(new_review)
-        print(f"{enseigne}: {len(enseigne_rows)}")
 
 except Exception as e:
    print(f"Erreur lors du scraping: {e}")
+   sys.exit(1)
 
 api_url = os.environ.get("SUPABASE_URL")
 secret_key = os.environ.get("SUPABASE_KEY")
@@ -99,3 +100,4 @@ try:
         )
 except Exception as e:
    print(f"Erreur en tentant d'insérer les données: {e}")
+   sys.exit(1)
