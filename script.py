@@ -94,7 +94,7 @@ try:
     supabase_client: Client = create_client(api_url, secret_key)
     if all_data_for_supabase:
         response = (
-            supabase_client.from_("Trustpilot_scraping")
+            supabase_client.from_("trustpilot_scraping")
             .upsert(all_data_for_supabase, on_conflict="author, rating, title, date_pub, company")
             .execute()
         )
