@@ -66,7 +66,7 @@ try:
                     exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
                     date_exp = exp_tag.text.strip() if exp_tag else None
 
-                    date_scraped = datetime.today().strftime('%Y-%m-%d') 
+                    #date_scraped = datetime.today().strftime('%Y-%m-%d') 
 
                     new_review = {
                     "author": author,
@@ -75,7 +75,7 @@ try:
                     "date_pub": date_pub,
                     "date_exp": date_exp,
                     "content": content,
-                    "date_scraped": date_scraped,
+                    #"date_scraped": date_scraped,
                     "company": enseigne
                     }
                     enseigne_rows.append(new_review)
@@ -95,7 +95,7 @@ try:
     if all_data_for_supabase:
         response = (
             supabase_client.from_("trustpilot_scraping")
-            .upsert(all_data_for_supabase, on_conflict="author, rating, title, date_pub, company")
+            .upsert(all_data_for_supabase, on_conflict="author, date_pub, content, company")
             .execute()
         )
 except Exception as e:
