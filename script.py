@@ -34,10 +34,13 @@ try:
         enseigne_rows = []
 
         while True:
-            
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+                }
             page += 1
             print(f"{enseigne}: Page {page}")
-            res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}')
+            res = requests.get(f'https://fr.trustpilot.com/review/www.{url}?page={page}', headers=headers)
             soup = bs(res.content, "lxml")
 
             reviews_container = soup.find('div', attrs={'data-reviews-list-start': 'true'})
