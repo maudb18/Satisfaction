@@ -139,8 +139,8 @@ async def main():
                     .execute()
                 )
         except Exception as e:
-        print(f"Erreur en tentant d'insérer les données: {e}")
-        sys.exit(1)
+            print(f"Erreur en tentant d'insérer les données: {e}")
+            sys.exit(1)
 
 if __name__ == "__main__":
     asyncio.run(main())
