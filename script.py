@@ -122,7 +122,7 @@ def main():
         if cleaned_data_for_supabase:
             response = (
                 supabase_client.from_("trustpilot_scraping")
-                .upsert(cleaned_data_for_supabase, on_conflict="author, date_pub, company")
+                .upsert(cleaned_data_for_supabase, on_conflict="author, title, date_pub, company")
                 .execute()
             )
             print("✅ Données insérées avec succès !")
