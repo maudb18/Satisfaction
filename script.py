@@ -1,10 +1,12 @@
-import asyncio
+import os
 import sys
 import time
 import random
-import os
 from bs4 import BeautifulSoup as bs
-import google_colab_selenium as gs
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from fake_useragent import UserAgent
 from supabase import Client, create_client
 
@@ -20,13 +22,25 @@ all_data_for_supabase = []
 def main():
     global all_data_for_supabase
 
+    print("⏳ Configuration du navigateur pour GitHub Actions...")
+    
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    
     ua = UserAgent(browsers=['chrome'], os=['windows', 'macos'])
-    random_user_agent = ua.random
+    chrome_options.add_argument(f"user-agent={ua.random}")
 
-    print("⏳ Démarrage du navigateur Colab (Mode Furtif)...")
     try:
-        driver = gs.UndetectedChrome()
-        driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": random_user_agent})
+        # Utilisation de webdriver-manager pour installer le bon driver automatiquement
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        
+        # Désactivation du flag webdriver pour la discrétion
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
     except Exception as e:
         print(f"💥 Impossible de lancer le navigateur : {e}")
         sys.exit(1)
