@@ -2,6 +2,7 @@ import asyncio
 import sys
 import time
 import random
+import os
 from bs4 import BeautifulSoup as bs
 import google_colab_selenium as gs
 from fake_useragent import UserAgent
