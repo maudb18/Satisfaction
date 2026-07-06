@@ -100,7 +100,7 @@ def main():
                             "septembre": "09", "octobre": "10", "novembre": "11", "décembre": "12"
                         }
 
-                        jour, nom_mois, annee = date.split()
+                        jour, nom_mois, annee = date_exp.split()
                         num_mois = mois.get(nom_mois.lower())
                         date_exp = datetime.strptime(f"{jour}-{num_mois}-{annee}", "%d-%m-%Y").date()
 
@@ -120,6 +120,7 @@ def main():
 
     except Exception as e:
         print(f"⚠️ Erreur pendant le scraping : {e}")
+        raise
     finally:
         driver.quit()
 
