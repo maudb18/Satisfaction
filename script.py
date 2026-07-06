@@ -83,18 +83,23 @@ def main():
                     rating = int(rating_tag['alt'].split(' ')[1]) if rating_tag else None
 
                     if rating is not None:
+                        rating = int(rating)
                         title_tag = review.find('h2', attrs={'data-service-review-title-typography': 'true'})
+                        title = title_tag.text.strip() if title_tag else None
                         content_tag = review.find('p', attrs={'data-service-review-text-typography': 'true'})
-                        time_tag = review.find('time'),
+                        content = content_tag.text.strip() if content_tag else None
+                        time_tag = review.find('time')
+                        date_pub = time_tag['datetime'] if time_tag else None
                         exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
+                        date_exp = exp_tag.text.strip() if exp_tag else None
 
                         new_review = {
                             "author": author,
                             "rating": rating,
-                            "title": title_tag.text.strip() if title_tag else None,
-                            "date_pub": time_tag['datetime'] if time_tag else None,
-                            "date_exp": exp_tag.text.strip() if exp_tag else None,
-                            "content": content_tag.text.strip() if content_tag else None,
+                            "title": title,
+                            "date_pub": date_pub,
+                            "date_exp": date_exp,
+                            "content": content,
                             "company": enseigne
                         }
                         all_data_for_supabase.append(new_review)
