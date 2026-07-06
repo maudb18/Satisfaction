@@ -85,13 +85,15 @@ def main():
                     if rating is not None:
                         title_tag = review.find('h2', attrs={'data-service-review-title-typography': 'true'})
                         content_tag = review.find('p', attrs={'data-service-review-text-typography': 'true'})
-                        time_tag = review.find('time')
+                        time_tag = review.find('time'),
+                        exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
 
                         new_review = {
                             "author": author,
                             "rating": rating,
                             "title": title_tag.text.strip() if title_tag else None,
                             "date_pub": time_tag['datetime'] if time_tag else None,
+                            "date_exp": exp_tag.text.strip() if exp_tag else None,
                             "content": content_tag.text.strip() if content_tag else None,
                             "company": enseigne
                         }
