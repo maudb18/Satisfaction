@@ -102,7 +102,8 @@ def main():
 
                         jour, nom_mois, annee = date_exp.split()
                         num_mois = mois.get(nom_mois.lower())
-                        date_exp = datetime.strptime(f"{jour}-{num_mois}-{annee}", "%d-%m-%Y").date()
+                        date_exp = f"{annee}-{num_mois}-{jour}"
+                        #date_exp = datetime.strptime(f"{jour}-{num_mois}-{annee}", "%d-%m-%Y").date()
 
                         new_review = {
                             "author": author,
