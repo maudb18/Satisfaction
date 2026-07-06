@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import random
+from datetime import datetime
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -92,6 +93,16 @@ def main():
                         date_pub = time_tag['datetime'] if time_tag else None
                         exp_tag = review.find('div', attrs={'data-testid': 'review-badge-date'})
                         date_exp = exp_tag.text.strip() if exp_tag else None
+
+                        mois = {
+                            "janvier": "01", "février": "02", "mars": "03", "avril": "04",
+                            "mai": "05", "juin": "06", "juillet": "07", "août": "08",
+                            "septembre": "09", "octobre": "10", "novembre": "11", "décembre": "12"
+                        }
+
+                        jour, nom_mois, annee = date.split()
+                        num_mois = mois.get(nom_mois.lower())
+                        date_exp = datetime.strptime(f"{jour}-{num_mois}-{annee}", "%d-%m-%Y").date()
 
                         new_review = {
                             "author": author,
