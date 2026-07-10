@@ -112,7 +112,8 @@ def main():
                             "date_pub": date_pub,
                             "date_exp": date_exp,
                             "content": content,
-                            "company": enseigne
+                            "company": enseigne,
+                            "source": "Trustpilot"
                         }
                         all_data_for_supabase.append(new_review)
                         enseigne_rows.append(new_review)
