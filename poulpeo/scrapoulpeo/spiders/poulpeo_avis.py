@@ -102,16 +102,33 @@ class PoulpeoAvisSpider(scrapy.Spider):
         "FEED_EXPORT_ENCODING": "utf-8",
     }
 
-    def __init__(self, url="https://www.poulpeo.com/avis/darty.htm", load_more=10, *args, **kwargs):
+    def __init__(self, urls=None, load_more=10, *args, **kwargs):
         """
         load_more:
           - 0 => clique jusqu’à disparition du bouton (avec max_clicks interne)
           - n>0 => clique au max n fois
         """
         super().__init__(*args, **kwargs)
-        self.start_urls = [url]
         self.collected_data = []
         self.load_more = int(load_more)
+
+        default_urls = ['https://www.poulpeo.com/avis/darty.htm',
+        'https://www.poulpeo.com/avis/boulanger.htm',
+        'https://www.poulpeo.com/avis/but.htm',
+        'https://www.poulpeo.com/avis/cdiscount.htm',
+        'https://www.poulpeo.com/avis/conforama.htm',
+        'https://www.poulpeo.com/avis/electrodepot.htm',
+        'https://www.poulpeo.com/avis/fnac.htm',
+        'https://www.poulpeo.com/avis/ikea.htm',
+        'https://www.poulpeo.com/avis/ldlc.htm']
+
+        # On traite la chaîne reçue depuis run.py ou on prend la valeur par défaut
+        if urls:
+            print("urls received", urls)
+            self.start_urls = [u.strip() for u in urls.split(",") if u.strip()]
+            print("start_urls", self.start_urls)
+        else:
+            self.start_urls = default_urls
 
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")  # enlève si tu veux voir Chrome
@@ -188,12 +205,14 @@ class PoulpeoAvisSpider(scrapy.Spider):
             page_url = response.url
             company = Selector(text=page_url).re_first(regex)
 
-            jour, mois, annee = date_fr.split("/")
-            date_pub = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
+            if date_fr is not None:
+                jour, mois, annee = date_fr.split("/")
+                date_pub = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
 
-            jour, mois, annee = exp_date.split("/")
-            date_exp = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
-
+            if exp_date is not None:
+                jour, mois, annee = exp_date.split("/")
+                date_exp = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
+                
             item = {
                 "source": "poulpeo",
                 "company": company,
@@ -202,6 +221,7 @@ class PoulpeoAvisSpider(scrapy.Spider):
                 "date_exp": date_exp,
                 "rating": rating,
                 "content": content,
+                "title": ""
             }
 
             self.collected_data.append(item)
@@ -233,6 +253,8 @@ class PoulpeoAvisSpider(scrapy.Spider):
                 if review_signature not in seen_reviews:
                     seen_reviews.add(review_signature)
                     cleaned_data_for_supabase.append(review)
+
+            print("cleaned_data_for_supabase", len(cleaned_data_for_supabase))
 
             self.logger.info(f"📤 Connexion à Supabase... Préparation de {len(cleaned_data_for_supabase)} avis uniques.")
             

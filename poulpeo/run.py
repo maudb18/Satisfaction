@@ -14,7 +14,7 @@ enseignes = ["darty",
 
 urls = [f"https://www.poulpeo.com/avis/{enseigne}.htm" for enseigne in enseignes]
 
-url = ",".join(map(str, urls))
+url = ",".join(urls)
 
 def run_spider():
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE', 'scrapoulpeo.settings')
