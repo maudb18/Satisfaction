@@ -100,6 +100,7 @@ class PoulpeoAvisSpider(scrapy.Spider):
         ),
         "LOG_LEVEL": "INFO",
         "FEED_EXPORT_ENCODING": "utf-8",
+        "CONCURRENT_REQUESTS": 1,
     }
 
     def __init__(self, urls=None, load_more=10, *args, **kwargs):
@@ -124,9 +125,7 @@ class PoulpeoAvisSpider(scrapy.Spider):
 
         # On traite la chaîne reçue depuis run.py ou on prend la valeur par défaut
         if urls:
-            print("urls received", urls)
             self.start_urls = [u.strip() for u in urls.split(",") if u.strip()]
-            print("start_urls", self.start_urls)
         else:
             self.start_urls = default_urls
 
@@ -189,6 +188,10 @@ class PoulpeoAvisSpider(scrapy.Spider):
         reviews = self.driver.find_elements(By.CSS_SELECTOR, 'div.review[itemprop="review"]')
         self.logger.info(f"Total avis chargés: {len(reviews)}")
 
+        regex = r"/avis/(.*?)\.htm"
+        match_company = re.search(regex, response.url)
+        company = match_company.group(1) if match_company else "unknown"
+
         for r in reviews:
             info = _safe_text(_first(r, "div.review-infos"))
             author, date_fr, exp_date = _parse_author_date(info)
@@ -201,17 +204,17 @@ class PoulpeoAvisSpider(scrapy.Spider):
                 continue
             self.seen.add(rid)
 
-            regex = r"https://www\.poulpeo\.com/avis/(.*?)\.htm"
-            page_url = response.url
-            company = Selector(text=page_url).re_first(regex)
-
-            if date_fr is not None:
+            if date_fr and date_fr is not None:
                 jour, mois, annee = date_fr.split("/")
                 date_pub = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
+            else:
+                date_fr = None
 
-            if exp_date is not None:
+            if exp_date and exp_date is not None:
                 jour, mois, annee = exp_date.split("/")
                 date_exp = f"{annee}-{mois}-{jour}" + "T00:00:00.000Z"
+            else:
+                date_exp = None
                 
             item = {
                 "source": "poulpeo",
@@ -254,7 +257,7 @@ class PoulpeoAvisSpider(scrapy.Spider):
                     seen_reviews.add(review_signature)
                     cleaned_data_for_supabase.append(review)
 
-            print("cleaned_data_for_supabase", len(cleaned_data_for_supabase))
+            self.logger.info(f"Total avis à envoyer: {len(cleaned_data_for_supabase)}")
 
             self.logger.info(f"📤 Connexion à Supabase... Préparation de {len(cleaned_data_for_supabase)} avis uniques.")
             
