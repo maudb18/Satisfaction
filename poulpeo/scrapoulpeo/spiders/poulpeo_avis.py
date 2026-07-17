@@ -103,7 +103,7 @@ class PoulpeoAvisSpider(scrapy.Spider):
         "CONCURRENT_REQUESTS": 1,
     }
 
-    def __init__(self, urls=None, load_more=10, *args, **kwargs):
+    def __init__(self, urls=None, load_more=1, *args, **kwargs):
         """
         load_more:
           - 0 => clique jusqu’à disparition du bouton (avec max_clicks interne)
@@ -118,9 +118,9 @@ class PoulpeoAvisSpider(scrapy.Spider):
         'https://www.poulpeo.com/avis/but.htm',
         'https://www.poulpeo.com/avis/cdiscount.htm',
         'https://www.poulpeo.com/avis/conforama.htm',
-        'https://www.poulpeo.com/avis/electrodepot.htm',
+        'https://www.poulpeo.com/avis/electro-depot.htm',
         'https://www.poulpeo.com/avis/fnac.htm',
-        'https://www.poulpeo.com/avis/ikea.htm',
+        'https://www.poulpeo.com/avis/ikea-fr.htm',
         'https://www.poulpeo.com/avis/ldlc.htm']
 
         # On traite la chaîne reçue depuis run.py ou on prend la valeur par défaut
@@ -190,7 +190,15 @@ class PoulpeoAvisSpider(scrapy.Spider):
 
         regex = r"/avis/(.*?)\.htm"
         match_company = re.search(regex, response.url)
-        company = match_company.group(1) if match_company else "unknown"
+        if match_company:
+            if match_company.group(1) == "ikea-fr":
+                company = "ikea"
+            elif match_company.group(1) == "electro-depot":
+                company == "electrodepot"
+            else:
+               company = match_company.group(1) 
+        else:
+            company = "unknown"
 
         for r in reviews:
             info = _safe_text(_first(r, "div.review-infos"))

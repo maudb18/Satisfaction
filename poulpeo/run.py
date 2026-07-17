@@ -7,9 +7,9 @@ enseignes = ["darty",
 "but",
 "cdiscount",
 "conforama",
-"electrodepot",
+"electro-depot",
 "fnac",
-"ikea",
+"ikea-fr",
 "ldlc"]
 
 urls = [f"https://www.poulpeo.com/avis/{enseigne}.htm" for enseigne in enseignes]
@@ -24,7 +24,7 @@ def run_spider():
     
     spider_args = {
         "urls": url,
-        "load_more": 10
+        "load_more": 1
     }
     
     process.crawl('poulpeo_avis', **spider_args)
