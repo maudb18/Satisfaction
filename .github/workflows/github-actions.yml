@@ -31,6 +31,3 @@ jobs:
 
       - name: Exécution du script Trustpilot
         run: python script.py
-
-      - name: Exécution du script Poulpeo
-        run: python poulpeo/run.py
