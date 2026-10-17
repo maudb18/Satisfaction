@@ -20,6 +20,16 @@ trustpilot = ["darty.com", "boulanger.com", "but.fr", "cdiscount.com", "conforam
 
 all_data_for_supabase = []
 
+
+response = (
+    supabase_client.from_("trustpilot_scraping")
+    .select("*", count="exact", head=True)
+    .execute()
+)
+
+avant = response.data
+
+
 def main():
     global all_data_for_supabase
 
@@ -146,7 +156,19 @@ def main():
                 .upsert(cleaned_data_for_supabase, on_conflict="author, title, date_pub, company")
                 .execute()
             )
-            print("✅ Données insérées avec succès !")
+            
+
+            response = (
+                supabase_client.from_("trustpilot_scraping")
+                .select("*", count="exact", head=True)
+                .execute()
+            )
+
+            après = response.data
+
+            print(f"✅ {après - avant} lignes insérées avec succès !")
+
+
     except Exception as e:
         print(f"❌ Erreur Supabase : {e}")
         sys.exit(1)
