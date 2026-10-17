@@ -20,7 +20,7 @@ trustpilot = ["darty.com", "boulanger.com", "but.fr", "cdiscount.com", "conforam
 
 all_data_for_supabase = []
 
-
+supabase_client: Client = create_client(api_url, secret_key)
 response = (
     supabase_client.from_("trustpilot_scraping")
     .select("*", count="exact", head=True)
