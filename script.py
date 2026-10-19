@@ -27,7 +27,7 @@ response = (
     .execute()
 )
 
-avant = response.data
+avant = response.count
 
 
 def main():
@@ -164,7 +164,7 @@ def main():
                 .execute()
             )
 
-            après = response.data
+            après = response.count
 
             print(f"✅ {après - avant} lignes insérées avec succès !")
 
